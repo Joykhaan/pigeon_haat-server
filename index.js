@@ -3,7 +3,7 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config();
 const port = process.env.PORT || 5000;
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 
 // middlware
 app.use(cors());
@@ -23,13 +23,58 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run(){
     try{
     const productCollection = client.db('mobileResell').collection('productCards');
+    const userInfoCollection = client.db('mobileResell').collection('userInfo');
+    const bookingInfoCollection = client.db('mobileResell').collection('bookingInfo');
 
     app.get('/categories/:id', async(req,res)=>{
         const ID =req.params.id
         const query ={id: (ID)}
         const cursor =productCollection.find(query);
-        const reviews = await cursor.toArray();
-        res.send(reviews);
+        const products = await cursor.toArray();
+        res.send(products);
+    })
+
+    
+    
+
+    app.post('/userinfo', async(req, res)=>{
+        const userinfo= req.body;
+        const result= await userInfoCollection.insertOne(userinfo);
+        res.send(result)
+    })
+
+    app.post('/bookinginfo', async(req, res)=>{
+        const bookinginfo= req.body;
+        const result= await bookingInfoCollection.insertOne(bookinginfo);
+        res.send(result)
+    })
+    
+    app.get('/dashboard/:uid', async(req,res)=>{
+        const uid =req.params.uid
+        const query ={uid: (uid)}
+        const cursor =bookingInfoCollection.find(query);
+        const bookingInfo = await cursor.toArray();
+        res.send(bookingInfo);
+    })
+    
+
+    app.get('/buyer/:email', async(req,res)=>{
+        const email = req.params.email
+        const query ={email}
+        const user = await userInfoCollection.findOne(query);
+        res.send({isBuyer: user?.role === 'Buyer'});
+    })
+    app.get('/admin/:email', async(req,res)=>{
+        const email = req.params.email
+        const query ={email}
+        const user = await userInfoCollection.findOne(query);
+        res.send({isAdmin: user?.role === 'Admin'});
+    })
+    app.get('/seller/:email', async(req,res)=>{
+        const email = req.params.email
+        const query ={email}
+        const user = await userInfoCollection.findOne(query);
+        res.send({isSeller: user?.role === 'Seller'});
     })
 
     }
