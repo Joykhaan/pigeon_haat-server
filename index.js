@@ -25,6 +25,8 @@ async function run(){
     const productCollection = client.db('mobileResell').collection('productCards');
     const userInfoCollection = client.db('mobileResell').collection('userInfo');
     const bookingInfoCollection = client.db('mobileResell').collection('bookingInfo');
+    const categoryInfoCollection = client.db('mobileResell').collection('categoryInfo');
+    const advertisedCollection = client.db('mobileResell').collection('advertisedInfo');
 
     app.get('/categories/:id', async(req,res)=>{
         const ID =req.params.id
@@ -48,6 +50,27 @@ async function run(){
         const result= await bookingInfoCollection.insertOne(bookinginfo);
         res.send(result)
     })
+    app.post('/categoriesinfo', async(req, res)=>{
+        const categoryinfo= req.body;
+        const result= await categoryInfoCollection.insertOne(categoryinfo);
+        res.send(result)
+    })
+    app.post('/productdetails', async(req, res)=>{
+        const productDetails= req.body;
+        const result= await productCollection.insertOne(productDetails);
+        res.send(result)
+    })
+    app.post('/advertised', async(req, res)=>{
+        const advertisedInfo= req.body;
+        const result= await advertisedCollection.insertOne(advertisedInfo);
+        res.send(result)
+    })
+    app.get('/advertisedProducts', async(req,res)=>{
+        const query ={}
+        const cursor =advertisedCollection.find(query);
+        const advertisedProducts = await cursor.toArray();
+        res.send(advertisedProducts);
+    })
     
     app.get('/dashboard/:uid', async(req,res)=>{
         const uid =req.params.uid
@@ -55,6 +78,13 @@ async function run(){
         const cursor =bookingInfoCollection.find(query);
         const bookingInfo = await cursor.toArray();
         res.send(bookingInfo);
+    })
+    app.get('/myproducts/:uid', async(req,res)=>{
+        const uid =req.params.uid
+        const query ={uid: (uid)}
+        const cursor =productCollection.find(query);
+        const myproducts = await cursor.toArray();
+        res.send(myproducts);
     })
     
 
