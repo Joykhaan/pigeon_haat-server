@@ -65,6 +65,24 @@ async function run(){
         const result= await advertisedCollection.insertOne(advertisedInfo);
         res.send(result)
     })
+    app.put('/verify/:email', async(req, res)=>{
+        const email= req.params.email;
+        const  query ={email: (email)};
+        const options = {upsert: true};
+        const updatedDoc = {
+            $set: {
+                isverified: 'verified'
+            }
+        }
+        const result= await productCollection.updateMany(query, updatedDoc, options);
+        res.send(result)
+    })
+    app.get('/categories', async(req,res)=>{
+        const query ={}
+        const cursor =categoryInfoCollection.find(query);
+        const advertisedProducts = await cursor.toArray();
+        res.send(advertisedProducts);
+    })
     app.get('/advertisedProducts', async(req,res)=>{
         const query ={}
         const cursor =advertisedCollection.find(query);
@@ -105,6 +123,29 @@ async function run(){
         const query ={email}
         const user = await userInfoCollection.findOne(query);
         res.send({isSeller: user?.role === 'Seller'});
+    })
+    app.get('/allsellers', async(req,res)=>{
+        const query ={role: "Seller"}
+        const user = await userInfoCollection.find(query).toArray();
+        res.send(user);
+    })
+    app.get('/allbuyers', async(req,res)=>{
+        const query ={role: "Buyer"}
+        const user = await userInfoCollection.find(query).toArray();
+        res.send(user);
+    })
+
+    app.delete('/deleteSeller/:id', async(req,res)=>{
+        const id =req.params.id;
+        const query ={ _id: ObjectId(id) };
+        const result=await userInfoCollection.deleteOne(query);
+        res.send(result);
+    })
+    app.delete('/deleteBuyer/:id', async(req,res)=>{
+        const id =req.params.id;
+        const query ={ _id: ObjectId(id) };
+        const result=await userInfoCollection.deleteOne(query);
+        res.send(result);
     })
 
     }
