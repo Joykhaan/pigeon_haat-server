@@ -16,11 +16,11 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 
 async function run(){
     try{
-    const productCollection = client.db('mobileResell').collection('productCards');
-    const userInfoCollection = client.db('mobileResell').collection('userInfo');
-    const bookingInfoCollection = client.db('mobileResell').collection('bookingInfo');
-    const categoryInfoCollection = client.db('mobileResell').collection('categoryInfo');
-    const advertisedCollection = client.db('mobileResell').collection('advertisedInfo');
+    const productCollection = client.db('pigeonResell').collection('pigeonCards');
+    const userInfoCollection = client.db('pigeonResell').collection('userInfo');
+    const bookingInfoCollection = client.db('pigeonResell').collection('bookingInfo');
+    const categoryInfoCollection = client.db('pigeonResell').collection('categoryInfo');
+    const advertisedCollection = client.db('pigeonResell').collection('advertisedInfo');
 
     app.get('/categories/:id', async(req,res)=>{
         const ID =req.params.id
